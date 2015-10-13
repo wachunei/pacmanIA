@@ -9,6 +9,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Random;
+
 import pacman.controllers.Controller;
 import pacman.controllers.HumanController;
 import pacman.controllers.KeyBoardInput;
@@ -22,9 +23,10 @@ import pacman.controllers.examples.RandomNonRevPacMan;
 import pacman.controllers.examples.RandomPacMan;
 import pacman.controllers.examples.StarterGhosts;
 import pacman.controllers.examples.StarterPacMan;
+import pacman.entries.ghosts.MyGhosts;
+import pacman.entries.pacman.MyPacMan;
 import pacman.game.Game;
 import pacman.game.GameView;
-
 import static pacman.game.Constants.*;
 
 /**
@@ -44,28 +46,31 @@ public class Executor
 	public static void main(String[] args)
 	{
 		Executor exec=new Executor();
+		
+		
+		// Asynchronous mode
+		// =================
+		// run the game in asynchronous mode.
+		boolean visual=true;
+
+		// TODO: pick your controller
+		// Controller<MOVE> pacmanController = new StarterPacMan();
+		// Controller<MOVE> pacmanController = new MyPacMan();
+		Controller<MOVE> pacmanController = new HumanController(new KeyBoardInput());
+
+		Controller<EnumMap<GHOST,MOVE>> ghostController = new StarterGhosts();
+		// Controller<EnumMap<GHOST,MOVE>> ghostController = new MyGhosts();
+
+		exec.runGameTimed(pacmanController, ghostController, visual);
 
 		/*
 		//run multiple games in batch mode - good for testing.
 		int numTrials=10;
-		exec.runExperiment(new RandomPacMan(),new RandomGhosts(),numTrials);
-		 */
+		exec.runExperiment(pacmanController, ghostController, numTrials);
+		*/
+
 		
-		/*
-		//run a game in synchronous mode: game waits until controllers respond.
-		int delay=5;
-		boolean visual=true;
-		exec.runGame(new RandomPacMan(),new RandomGhosts(),visual,delay);
-  		 */
-		
-		///*
-		//run the game in asynchronous mode.
-		boolean visual=true;
-//		exec.runGameTimed(new NearestPillPacMan(),new AggressiveGhosts(),visual);
-		exec.runGameTimed(new StarterPacMan(),new StarterGhosts(),visual);
-//		exec.runGameTimed(new HumanController(new KeyBoardInput()),new StarterGhosts(),visual);	
-		//*/
-		
+
 		/*
 		//run the game in asynchronous mode but advance as soon as both controllers are ready  - this is the mode of the competition.
 		//time limit of DELAY ms still applies.

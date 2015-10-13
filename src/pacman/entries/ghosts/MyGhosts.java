@@ -18,8 +18,8 @@ public class MyGhosts extends Controller<EnumMap<GHOST,MOVE>>
 	public EnumMap<GHOST, MOVE> getMove(Game game, long timeDue)
 	{
 		myMoves.clear();
-		
-		//Place your game logic here to play the game as the ghosts
+
+		// TODO: game logic here to play the game as the ghosts
 		
 		return myMoves;
 	}
