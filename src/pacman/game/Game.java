@@ -1152,9 +1152,14 @@ public final class Game
 	 */
 	public boolean doesGhostRequireAction(GHOST ghostType)
 	{
-		//inlcude neutral here for the unique case where the ghost just left the lair
-		return ((isJunction(ghosts.get(ghostType).currentNodeIndex) || (ghosts.get(ghostType).lastMoveMade==MOVE.NEUTRAL) && ghosts.get(ghostType).currentNodeIndex==currentMaze.initialGhostNodeIndex) 
-				&& (ghosts.get(ghostType).edibleTime==0 || ghosts.get(ghostType).edibleTime%GHOST_SPEED_REDUCTION!=0));
+		//include neutral here for the unique case where the ghost just left the lair
+		return (
+				  (isJunction(ghosts.get(ghostType).currentNodeIndex) ||
+				  		(ghosts.get(ghostType).lastMoveMade==MOVE.NEUTRAL) && ghosts.get(ghostType).currentNodeIndex==currentMaze.initialGhostNodeIndex)
+				    &&
+				  (ghosts.get(ghostType).edibleTime==0 ||
+				   ghosts.get(ghostType).edibleTime%GHOST_SPEED_REDUCTION!=0)
+				);
 	}
 	
 	/**

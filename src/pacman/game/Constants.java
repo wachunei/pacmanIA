@@ -79,7 +79,7 @@ public final class Constants
 	//for Competition
 	public static final int WAIT_LIMIT=5000;				//time limit in milliseconds for the controller to initialise;
 	public static final int MEMORY_LIMIT=512;				//memory limit in MB for controllers (including the game)
-	public static final int IO_LIMIT=10;					//limit in MB on the files written by controllers
+	public static final int IO_LIMIT=10;					  //limit in MB on the files written by controllers
 	
 	//for Maze
 	public static final String pathMazes="data/mazes";
