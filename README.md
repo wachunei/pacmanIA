@@ -17,3 +17,4 @@ Any modification outside your Controllers is not allowed directly, but may be pr
 Ideas
 -----
   * [understanding-pac-man-ghost-behavior](http://gameinternals.com/post/2072558330/understanding-pac-man-ghost-behavior)
+  * [Ms PacMan with MonteCarlo simulation](https://github.com/stewartml/montecarlo-pacman)
