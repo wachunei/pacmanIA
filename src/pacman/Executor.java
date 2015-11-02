@@ -51,6 +51,7 @@ public class Executor {
 
 		Controller<EnumMap<GHOST, MOVE>> ghostController =
 				new StarterGhosts();
+				// new RandomGhosts();
 		    // new MyGhosts();
 
 

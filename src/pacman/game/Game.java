@@ -570,7 +570,9 @@ public final class Game
 		Node node=currentMaze.graph[ghost.currentNodeIndex];
 		
 		//The direction is possible and not opposite to the previous direction of that ghost
-		if(node.neighbourhood.containsKey(direction) && direction!=ghost.lastMoveMade.opposite())
+		@SuppressWarnings("unused")
+		boolean allowed = ALLOW_REVERSALS || direction!=ghost.lastMoveMade.opposite();
+		if(node.neighbourhood.containsKey(direction) && allowed)
 			return direction;
 		else
 		{
