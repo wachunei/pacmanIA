@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Dietr1ch/IIC2613-pacman.svg?branch=master)](https://travis-ci.org/Dietr1ch/IIC2613-pacman)
+
 IIC2613-pacman
 ==============
 
