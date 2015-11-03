@@ -52,4 +52,7 @@
             <classpath refid="IIC2613-pacman.classpath"/>
         </java>
     </target>
+    <target depends="build-project" name="test">
+        <echo message="${ant.project.name} builds (="/>
+    </target>
 </project>
