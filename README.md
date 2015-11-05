@@ -26,6 +26,7 @@ Any source for ideas and code *must* be published here. Pull requests are
   encouraged.
    * [understanding-pac-man-ghost-behavior](http://gameinternals.com/post/2072558330/understanding-pac-man-ghost-behavior)
    * [Ms PacMan with MonteCarlo simulation](https://github.com/stewartml/montecarlo-pacman)
+   * [ICE Pambush 4](http://dces.essex.ac.uk/staff/sml/pacman/cig2010/ICE%20Pambush%204.pdf)
 
 
 
