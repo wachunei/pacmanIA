@@ -45,14 +45,15 @@ public class Executor {
 
 		// TODO: pick your controller
 		Controller<MOVE> pacmanController =
-				new HumanController(new KeyBoardInput());
-		    // new StarterPacMan();
-		    // new MyPacMan();
+				//new HumanController(new KeyBoardInput());
+				// new StarterPacMan();
+				new MyPacMan();
+		//				new RandomPacMan();
 
 		Controller<EnumMap<GHOST, MOVE>> ghostController =
 				new StarterGhosts();
-				// new RandomGhosts();
-		    // new MyGhosts();
+		// new RandomGhosts();
+		// new MyGhosts();
 
 
 
@@ -121,7 +122,7 @@ public class Executor {
 	 *          The number of trials to be executed
 	 */
 	public void runExperiment(Controller<MOVE> pacManController,
-	    Controller<EnumMap<GHOST, MOVE>> ghostController, int trials) {
+			Controller<EnumMap<GHOST, MOVE>> ghostController, int trials) {
 		double avgScore = 0;
 
 		Random rnd = new Random(0);
@@ -132,12 +133,12 @@ public class Executor {
 
 			while (!game.gameOver()) {
 				game.advanceGame(
-				    pacManController.getMove(
-				    		game.copy(),
-				    		System.currentTimeMillis() + DELAY),
-				    ghostController.getMove(
-				    		game.copy(),
-				    		System.currentTimeMillis() + DELAY));
+						pacManController.getMove(
+								game.copy(),
+								System.currentTimeMillis() + DELAY),
+						ghostController.getMove(
+								game.copy(),
+								System.currentTimeMillis() + DELAY));
 			}
 
 			avgScore += game.getScore();
@@ -162,8 +163,8 @@ public class Executor {
 	 *          The delay between time-steps
 	 */
 	public void runGame(Controller<MOVE> pacManController,
-	    Controller<EnumMap<GHOST, MOVE>> ghostController, boolean visual,
-	    int delay) {
+			Controller<EnumMap<GHOST, MOVE>> ghostController, boolean visual,
+			int delay) {
 		Game game = new Game(0);
 
 		GameView gv = null;
@@ -174,7 +175,7 @@ public class Executor {
 		while (!game.gameOver()) {
 			game.advanceGame(
 					pacManController.getMove(game.copy(), -1),
-			    ghostController.getMove(game.copy(), -1));
+					ghostController.getMove(game.copy(), -1));
 
 			try {
 				Thread.sleep(delay);
@@ -199,7 +200,7 @@ public class Executor {
 	 *          Indicates whether or not to use visuals
 	 */
 	public void runGameTimed(Controller<MOVE> pacManController,
-	    Controller<EnumMap<GHOST, MOVE>> ghostController, boolean visual) {
+			Controller<EnumMap<GHOST, MOVE>> ghostController, boolean visual) {
 		Game game = new Game(0);
 
 		GameView gv = null;
@@ -209,7 +210,7 @@ public class Executor {
 
 		if (pacManController instanceof HumanController)
 			gv.getFrame().addKeyListener(
-			    ((HumanController) pacManController).getKeyboardInput());
+					((HumanController) pacManController).getKeyboardInput());
 
 		new Thread(pacManController).start();
 		new Thread(ghostController).start();
@@ -257,8 +258,8 @@ public class Executor {
 	 *          Indicates whether or not to use visuals
 	 */
 	public void runGameTimedSpeedOptimised(Controller<MOVE> pacManController,
-	    Controller<EnumMap<GHOST, MOVE>> ghostController, boolean fixedTime,
-	    boolean visual) {
+			Controller<EnumMap<GHOST, MOVE>> ghostController, boolean fixedTime,
+			boolean visual) {
 		Game game = new Game(0);
 
 		GameView gv = null;
@@ -268,7 +269,7 @@ public class Executor {
 
 		if (pacManController instanceof HumanController)
 			gv.getFrame().addKeyListener(
-			    ((HumanController) pacManController).getKeyboardInput());
+					((HumanController) pacManController).getKeyboardInput());
 
 		new Thread(pacManController).start();
 		new Thread(ghostController).start();
@@ -326,8 +327,8 @@ public class Executor {
 	 *          The file name of the file that saves the replay
 	 */
 	public void runGameTimedRecorded(Controller<MOVE> pacManController,
-	    Controller<EnumMap<GHOST, MOVE>> ghostController, boolean visual,
-	    String fileName) {
+			Controller<EnumMap<GHOST, MOVE>> ghostController, boolean visual,
+			String fileName) {
 		StringBuilder replay = new StringBuilder();
 
 		Game game = new Game(0);
@@ -339,7 +340,7 @@ public class Executor {
 
 			if (pacManController instanceof HumanController)
 				gv.getFrame().addKeyListener(
-				    ((HumanController) pacManController).getKeyboardInput());
+						((HumanController) pacManController).getKeyboardInput());
 		}
 
 		new Thread(pacManController).start();
@@ -447,7 +448,7 @@ public class Executor {
 		BufferedReader br = null;
 		try {
 			br = new BufferedReader(new InputStreamReader(
-			    new FileInputStream(fileName)));
+					new FileInputStream(fileName)));
 			String input = br.readLine();
 
 			while (input != null) {
@@ -462,13 +463,13 @@ public class Executor {
 		}
 		finally {
 			if(br!=null)
-	      try {
-	        br.close();
-        }
-        catch (IOException e) {
-	        // TODO Auto-generated catch block
-	        e.printStackTrace();
-        }
+				try {
+					br.close();
+				}
+			catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		return replay;
