@@ -15,18 +15,21 @@ import pacman.game.Game;
 public class MyPacMan extends Controller<MOVE>
 {
 	private MOVE myMove=MOVE.NEUTRAL;
-	private static final int MIN_DISTANCE = 15;
+	private static final int MIN_DISTANCE = 20;
+	
+	float runAwayPriority = 1.0f;
+	float eatPillPriority = 1.0f;		
+	float eatPowerPillPriority = 1.0f;
+	float eatGhostPriority = 1.0f;
 
 	public MOVE getMove(Game game, long timeDue) 
 	{
-		// TODO: game logic here to play the game as Ms Pac-Man
-		
 		// Current PacMan Position
 		int current=game.getPacmanCurrentNodeIndex();
-		
+
 		// Current Possible Nodes 
 		MOVE[] possibleMoves = null;
-		
+
 		// GhostTooClose
 		boolean isAnActiveGhostTooClose = false;
 		for(GHOST ghost : GHOST.values()) {
@@ -38,51 +41,89 @@ public class MyPacMan extends Controller<MOVE>
 				}
 			}
 		}
-		
-		// possibleMoves depending if isAGhostTooClose
-		if(isAnActiveGhostTooClose) {
+
+		// PossibleMoves depending if isAGhostTooClose
+		if(isAnActiveGhostTooClose) {			
 			possibleMoves = game.getPossibleMoves(current);
 		} else {
+			// When there are no ghosts close, we don't want to turn back
 			possibleMoves = game.getPossibleMoves(current,game.getPacmanLastMoveMade());
-			MOVE nextMove = null;
-			int nextMoveValue = 0;
-			
-			for(MOVE possibleMove : possibleMoves) {
-				int possibleNode = game.getNeighbour(current, possibleMove);
-				int possibleNodeValue = 0;
-
-				for(GHOST ghost : GHOST.values()){
-					if(game.getGhostEdibleTime(ghost)==0 && game.getGhostLairTime(ghost)==0) {
-//						int distance = game.getShortestPathDistance(possibleNode, game.getGhostCurrentNodeIndex(ghost));
-						int distance = game.getManhattanDistance(possibleNode, game.getGhostCurrentNodeIndex(ghost));
-						possibleNodeValue +=  distance < MIN_DISTANCE ? distance/10000: distance;
-					}
-				}
-				
-				if(nextMoveValue < possibleNodeValue) {
-					nextMoveValue = possibleNodeValue;
-					nextMove = possibleMove;
-				}
-			}
-			return nextMove;
 		}
+
+
+		MOVE nextMove = null;
+		float nextMoveValue = 0;
+		//int furthestClosestGhostDistance = 0;		
+
+		for(MOVE possibleMove : possibleMoves) {
+			int node = game.getNeighbour(current, possibleMove);
+			float currentValue = evaluateNode(node, game);
+			if(currentValue > nextMoveValue){
+				nextMoveValue = currentValue;
+				nextMove = possibleMove;
+			}
+		}
+		return nextMove;
+
+		/*
+
+			int possibleNode = game.getNeighbour(current, possibleMove);
+			int possibleNodeValue = 0;
+
+			int closestGhostDistance = Integer.MAX_VALUE;
+
+			
+
+			if(closestGhostDistance > furthestClosestGhostDistance){
+				furthestClosestGhostDistance = closestGhostDistance;
+				nextMove = possibleMove;
+			}
+
+		 */
+
+	}
+
+	//		for(GHOST ghost : GHOST.values())
+	//			if(game.getGhostEdibleTime(ghost)==0 && game.getGhostLairTime(ghost)==0)
+	//				
+	////				if( ghost == GHOST.BLINKY) {
+	////					currentGhostsPositions[0] = game.get
+	////				}
+	////				System.out.println(ghost.name()+": "+game.getShortestPathDistance(current,game.getGhostCurrentNodeIndex(ghost)));
+	////				if(game.getShortestPathDistance(current,game.getGhostCurrentNodeIndex(ghost))<MIN_DISTANCE)
+	////					return game.getNextMoveAwayFromTarget(game.getPacmanCurrentNodeIndex(),game.getGhostCurrentNodeIndex(ghost),DM.PATH);
+	//
+	//		return myMove;
+
+	private float evaluateNode(int node , Game game){
+		float closestGhostScore = 0;
+		float closestPillScore = 0;
+		float closestPowerPillScore = 0;
+		float closestEdibleGhostScore = 0;
 		
-		return myMove;
+		closestGhostScore = closestGhostDistance(node, game);				
 		
+		float result = runAwayPriority*closestGhostScore;
 		
-		
-		
-//		for(GHOST ghost : GHOST.values())
-//			if(game.getGhostEdibleTime(ghost)==0 && game.getGhostLairTime(ghost)==0)
-//				
-////				if( ghost == GHOST.BLINKY) {
-////					currentGhostsPositions[0] = game.get
-////				}
-////				System.out.println(ghost.name()+": "+game.getShortestPathDistance(current,game.getGhostCurrentNodeIndex(ghost)));
-////				if(game.getShortestPathDistance(current,game.getGhostCurrentNodeIndex(ghost))<MIN_DISTANCE)
-////					return game.getNextMoveAwayFromTarget(game.getPacmanCurrentNodeIndex(),game.getGhostCurrentNodeIndex(ghost),DM.PATH);
-//
-//		return myMove;
+		return result;
 	}
 	
+	private int closestGhostDistance(int node, Game game){
+		
+		int closestGhostDistance = Integer.MAX_VALUE;		
+		
+		for(GHOST ghost : GHOST.values()){
+			if(game.getGhostEdibleTime(ghost)==0 && game.getGhostLairTime(ghost)==0) {
+				int distance = game.getShortestPathDistance(node, game.getGhostCurrentNodeIndex(ghost));
+				if(distance < closestGhostDistance){
+					closestGhostDistance = distance;
+				}					
+			}
+		}
+		return closestGhostDistance;
+		
+	} 
+	
+	
 }
+

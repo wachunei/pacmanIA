@@ -46,7 +46,7 @@ public class Executor {
 		// TODO: pick your controller
 		Controller<MOVE> pacmanController =
 				//new HumanController(new KeyBoardInput());
-				// new StarterPacMan();
+//				 new StarterPacMan();
 				new MyPacMan();
 		//				new RandomPacMan();
 
