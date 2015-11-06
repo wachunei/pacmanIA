@@ -3,6 +3,7 @@ package pacman.entries.pacman;
 import java.util.ArrayList;
 
 import pacman.controllers.Controller;
+import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
@@ -15,7 +16,7 @@ import pacman.game.Game;
 public class MyPacMan extends Controller<MOVE>
 {
 	private MOVE myMove=MOVE.NEUTRAL;
-	private static final int MIN_DISTANCE = 20;
+	private static final int MIN_DISTANCE = 15;
 	
 	float runAwayPriority = 1.0f;
 	float eatPillPriority = 1.0f;		
@@ -43,9 +44,13 @@ public class MyPacMan extends Controller<MOVE>
 		}
 
 		// PossibleMoves depending if isAGhostTooClose
-		if(isAnActiveGhostTooClose) {			
+		if(isAnActiveGhostTooClose) {	
+			eatPillPriority = 0.0f;
+			runAwayPriority = 1.0f;
 			possibleMoves = game.getPossibleMoves(current);
 		} else {
+			eatPillPriority = 1.0f;
+			runAwayPriority = 0.0f;
 			// When there are no ghosts close, we don't want to turn back
 			possibleMoves = game.getPossibleMoves(current,game.getPacmanLastMoveMade());
 		}
@@ -101,9 +106,11 @@ public class MyPacMan extends Controller<MOVE>
 		float closestPowerPillScore = 0;
 		float closestEdibleGhostScore = 0;
 		
-		closestGhostScore = closestGhostDistance(node, game);				
+		closestGhostScore = closestGhostDistance(node, game);
+		closestPillScore = 10/(0.00001f+closestPillDistance(node, game));
 		
 		float result = runAwayPriority*closestGhostScore;
+		result += eatPillPriority*closestPillScore;
 		
 		return result;
 	}
@@ -114,7 +121,8 @@ public class MyPacMan extends Controller<MOVE>
 		
 		for(GHOST ghost : GHOST.values()){
 			if(game.getGhostEdibleTime(ghost)==0 && game.getGhostLairTime(ghost)==0) {
-				int distance = game.getShortestPathDistance(node, game.getGhostCurrentNodeIndex(ghost));
+				//int distance = game.getShortestPathDistance(node, game.getGhostCurrentNodeIndex(ghost));
+				int distance = game.getManhattanDistance(node, game.getGhostCurrentNodeIndex(ghost));				
 				if(distance < closestGhostDistance){
 					closestGhostDistance = distance;
 				}					
@@ -124,6 +132,11 @@ public class MyPacMan extends Controller<MOVE>
 		
 	} 
 	
+	private int closestPillDistance(int node, Game game){
+		int[] activePills = game.getActivePillsIndices();		
+		int closestActivePillsNode = game.getClosestNodeIndexFromNodeIndex(node, activePills, DM.MANHATTAN);
+		return game.getShortestPathDistance(node, closestActivePillsNode);		
+	}
 	
 }
 
