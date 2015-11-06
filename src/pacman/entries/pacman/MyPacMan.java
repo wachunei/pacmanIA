@@ -28,45 +28,48 @@ public class MyPacMan extends Controller<MOVE>
 		MOVE[] possibleMoves = null;
 		
 		// GhostTooClose
-		boolean isAGhostTooClose = false;
+		boolean isAnActiveGhostTooClose = false;
 		for(GHOST ghost : GHOST.values()) {
 			if(game.getGhostEdibleTime(ghost)==0 && game.getGhostLairTime(ghost)==0) {
 				int distance = game.getShortestPathDistance(current, game.getGhostCurrentNodeIndex(ghost));
 				if (distance < MIN_DISTANCE) {
-					isAGhostTooClose = true;
+					isAnActiveGhostTooClose = true;
 					break;
 				}
 			}
 		}
 		
 		// possibleMoves depending if isAGhostTooClose
-		if(isAGhostTooClose) {
+		if(isAnActiveGhostTooClose) {
 			possibleMoves = game.getPossibleMoves(current);
 		} else {
 			possibleMoves = game.getPossibleMoves(current,game.getPacmanLastMoveMade());
-		}
-		
-		
-		MOVE nextMove = null;
-		int nextMoveValue = 0;
-		
-		for(MOVE possibleMove : possibleMoves) {
-			int possibleNode = game.getNeighbour(current, possibleMove);
-			int possibleNodeValue = 0;
+			MOVE nextMove = null;
+			int nextMoveValue = 0;
+			
+			for(MOVE possibleMove : possibleMoves) {
+				int possibleNode = game.getNeighbour(current, possibleMove);
+				int possibleNodeValue = 0;
 
-			for(GHOST ghost : GHOST.values()){
-				if(game.getGhostEdibleTime(ghost)==0 && game.getGhostLairTime(ghost)==0) {
-					int distance = game.getShortestPathDistance(possibleNode, game.getGhostCurrentNodeIndex(ghost));
-					possibleNodeValue +=  distance < MIN_DISTANCE ? distance/10000: distance;
+				for(GHOST ghost : GHOST.values()){
+					if(game.getGhostEdibleTime(ghost)==0 && game.getGhostLairTime(ghost)==0) {
+//						int distance = game.getShortestPathDistance(possibleNode, game.getGhostCurrentNodeIndex(ghost));
+						int distance = game.getManhattanDistance(possibleNode, game.getGhostCurrentNodeIndex(ghost));
+						possibleNodeValue +=  distance < MIN_DISTANCE ? distance/10000: distance;
+					}
+				}
+				
+				if(nextMoveValue < possibleNodeValue) {
+					nextMoveValue = possibleNodeValue;
+					nextMove = possibleMove;
 				}
 			}
-			
-			if(nextMoveValue < possibleNodeValue) {
-				nextMoveValue = possibleNodeValue;
-				nextMove = possibleMove;
-			}
+			return nextMove;
 		}
-		return nextMove;
+		
+		return myMove;
+		
+		
 		
 		
 //		for(GHOST ghost : GHOST.values())
