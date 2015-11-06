@@ -17,7 +17,7 @@ public class MyPacMan extends Controller<MOVE>
 {
 	private MOVE myMove=MOVE.NEUTRAL;
 	private static final int MIN_DISTANCE = 15;
-	private static final int EDIBILITY_TIME = 50;
+	private static final int EDIBILITY_TIME = 15;
 	
 	float runAwayPriority = 1.0f;
 	float eatPillPriority = 1.0f;		
@@ -26,6 +26,12 @@ public class MyPacMan extends Controller<MOVE>
 
 	public MOVE getMove(Game game, long timeDue) 
 	{
+		
+		System.out.print("runAwayPri:"+runAwayPriority+"\n");
+		System.out.print("eatPillPri:"+eatPillPriority +"\n");
+		System.out.print("eatPowerPi:"+eatPowerPillPriority +"\n");
+		System.out.print("eatGhostPr:"+eatGhostPriority+"\n");
+		
 		// Current PacMan Position
 		int current=game.getPacmanCurrentNodeIndex();
 
@@ -46,12 +52,14 @@ public class MyPacMan extends Controller<MOVE>
 
 		// PossibleMoves depending if isAGhostTooClose
 		if(isAnActiveGhostTooClose) {	
-			eatPillPriority = 0.0f;
+			eatPillPriority = 1.0f;
 			runAwayPriority = 1.0f;
+			eatPowerPillPriority = 1.0f;			
 			possibleMoves = game.getPossibleMoves(current);
 		} else {
 			eatPillPriority = 1.0f;
 			runAwayPriority = 0.0f;
+			eatGhostPriority = 50.0f;
 			// When there are no ghosts close, we don't want to turn back
 			possibleMoves = game.getPossibleMoves(current,game.getPacmanLastMoveMade());
 		}
@@ -65,7 +73,8 @@ public class MyPacMan extends Controller<MOVE>
 		}
 		
 		if(edibleGhostExist){
-			eatGhostPriority = 1.0f;
+			eatGhostPriority = 50.0f;
+			eatPowerPillPriority = 0.0f;
 		}
 
 
@@ -121,11 +130,14 @@ public class MyPacMan extends Controller<MOVE>
 		
 		closestGhostScore = closestGhostDistance(node, game);
 		closestPillScore = 10/(0.00001f+closestPillDistance(node, game));
-		closestEdibleGhostScore = 10/(0.00001f+closestEdibleGhostDistance(node, game));
+		closestPowerPillScore = 50/(0.00001f+closestPowerPillDistance(node, game));
+		closestEdibleGhostScore = 50/(0.00001f+closestEdibleGhostDistance(node, game));
+		
 		
 		float result = runAwayPriority*closestGhostScore;
 		result += eatPillPriority*closestPillScore;
-		result += eatGhostPriority*closestGhostScore;
+		result += eatPowerPillPriority*closestPowerPillScore;
+		result += eatGhostPriority*closestGhostScore;		
 		
 		return result;
 	}
@@ -160,7 +172,7 @@ public class MyPacMan extends Controller<MOVE>
 		for(GHOST ghost : GHOST.values()){
 			if(game.isGhostEdible(ghost) && game.getGhostEdibleTime(ghost)>EDIBILITY_TIME){
 				int ghostNode = game.getGhostCurrentNodeIndex(ghost);
-				int ghostDistance = game.getShortestPathDistance(node, ghostNode);
+				int ghostDistance = game.getManhattanDistance(node, ghostNode);
 				
 				if(ghostDistance < distance){
 					distance = ghostDistance;
@@ -171,6 +183,15 @@ public class MyPacMan extends Controller<MOVE>
 		return distance;
 	}
 
+	private int closestPowerPillDistance(int node, Game game){
+		int[] activePowerPills = game.getActivePowerPillsIndices();		
+		int closestActivePowerPillsNode = game.getClosestNodeIndexFromNodeIndex(node, activePowerPills, DM.PATH);
+		if(activePowerPills.length > 0){
+			return game.getShortestPathDistance(node, closestActivePowerPillsNode);			
+		}
+		return Integer.MAX_VALUE;
+					
+	}
 	
 
 }
