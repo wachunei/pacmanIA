@@ -20,15 +20,35 @@ public class MyPacMan extends Controller<MOVE>
 	public MOVE getMove(Game game, long timeDue) 
 	{
 		// TODO: game logic here to play the game as Ms Pac-Man
-
+		
+		// Current PacMan Position
 		int current=game.getPacmanCurrentNodeIndex();
 		
-//		int[] currentGhostsPositions = new int[4];
+		// Current Possible Nodes 
+		MOVE[] possibleMoves = null;
+		
+		// GhostTooClose
+		boolean isAGhostTooClose = false;
+		for(GHOST ghost : GHOST.values()) {
+			if(game.getGhostEdibleTime(ghost)==0 && game.getGhostLairTime(ghost)==0) {
+				int distance = game.getShortestPathDistance(current, game.getGhostCurrentNodeIndex(ghost));
+				if (distance < MIN_DISTANCE) {
+					isAGhostTooClose = true;
+					break;
+				}
+			}
+		}
+		
+		// possibleMoves depending if isAGhostTooClose
+		if(isAGhostTooClose) {
+			possibleMoves = game.getPossibleMoves(current);
+		} else {
+			possibleMoves = game.getPossibleMoves(current,game.getPacmanLastMoveMade());
+		}
+		
 		
 		MOVE nextMove = null;
 		int nextMoveValue = 0;
-
-		MOVE[] possibleMoves = game.getPossibleMoves(current);
 		
 		for(MOVE possibleMove : possibleMoves) {
 			int possibleNode = game.getNeighbour(current, possibleMove);
