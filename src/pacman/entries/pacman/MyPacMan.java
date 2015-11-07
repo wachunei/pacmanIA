@@ -33,14 +33,20 @@ public class MyPacMan extends Controller<MOVE>
 	public MOVE getMove(Game game, long timeDue) 
 	{
 
+		// Current PacMan Position
+		int current=game.getPacmanCurrentNodeIndex();
+		
+		for(GHOST ghost : GHOST.values())
+			if(game.getGhostEdibleTime(ghost)==0 && game.getGhostLairTime(ghost)==0)
+				if(game.getShortestPathDistance(current,game.getGhostCurrentNodeIndex(ghost))<7)
+					return game.getNextMoveAwayFromTarget(game.getPacmanCurrentNodeIndex(),game.getGhostCurrentNodeIndex(ghost),DM.PATH);
+
 		// Resert variables		
 		rewardUp = false;
 		rewardLeft = false;
 		rewardDown = false;
 		rewardRight = false;
 
-		// Current PacMan Position
-		int current=game.getPacmanCurrentNodeIndex();
 
 		// Current Possible Nodes 
 		MOVE[] possibleMoves = null;
@@ -81,12 +87,27 @@ public class MyPacMan extends Controller<MOVE>
 						}
 
 					}
-
-
 				}
+				
 				
 			}			
 		}
+		
+		if(rewardUp && rewardDown){
+			rewardUp = false;
+			rewardDown = false;
+			rewardLeft = true;
+			rewardRight = true;
+		}
+		
+		if(rewardLeft && rewardRight){
+			rewardUp = true;
+			rewardDown = true;
+			rewardLeft = false;
+			rewardRight = false;
+		}
+		
+		
 		// EdibleGhostExists
 		boolean edibleGhostExists = false;
 		for(GHOST ghost : GHOST.values()){
@@ -103,10 +124,18 @@ public class MyPacMan extends Controller<MOVE>
 				runAwayPriority = 2.0f;
 				eatPowerPillPriority = 0.0f;
 				eatGhostPriority = 1.9f;
-			} else {
-				eatPillPriority = 0.0f;
-				runAwayPriority = 2.0f;
-				eatPowerPillPriority = 2.0f;
+			} else {				
+				runAwayPriority = 2.0f;				
+				if(game.getNumberOfActivePowerPills() > 0){
+					eatPowerPillPriority = 2.0f;
+					eatPillPriority = 0.3f;
+				}
+				else{
+					eatPowerPillPriority = 0.0f;
+					eatPillPriority = 2.0f;
+
+				}
+				
 				eatGhostPriority = 0.5f;
 			}
 			possibleMoves = game.getPossibleMoves(current);
