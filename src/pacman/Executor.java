@@ -51,9 +51,10 @@ public class Executor {
 		//				new RandomPacMan();
 
 		Controller<EnumMap<GHOST, MOVE>> ghostController =
-				//new StarterGhosts();
-		 new RandomGhosts();
+//				new StarterGhosts();
+//		 new RandomGhosts();
 		// new MyGhosts();
+				new Legacy();
 
 
 
