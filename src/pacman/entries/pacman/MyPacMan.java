@@ -49,35 +49,45 @@ public class MyPacMan extends Controller<MOVE>
 				}
 			}			
 		}
-
-		// PossibleMoves depending if isAGhostTooClose
-		if(isAnActiveGhostTooClose) {	
-			eatPillPriority = 1.0f;
-			runAwayPriority = 1.0f;
-			eatPowerPillPriority = 1.0f;			
-			possibleMoves = game.getPossibleMoves(current);
-		} else {
-			eatPillPriority = 1.0f;
-			runAwayPriority = 0.0f;
-			eatGhostPriority = 50.0f;
-			// When there are no ghosts close, we don't want to turn back
-			possibleMoves = game.getPossibleMoves(current,game.getPacmanLastMoveMade());
-		}
-		
-		boolean edibleGhostExist = false;
+		// EdibleGhostExists
+		boolean edibleGhostExists = false;
 		for(GHOST ghost : GHOST.values()){
 			if(game.isGhostEdible(ghost)){
-				edibleGhostExist = true;
+				edibleGhostExists = true;
 				break;
 			}
 		}
-		
-		if(edibleGhostExist){
-			eatGhostPriority = 50.0f;
-			eatPowerPillPriority = 0.0f;
+
+		// PossibleMoves depending if isAGhostTooClose
+		if(isAnActiveGhostTooClose) {	
+			if(edibleGhostExists){
+				eatPillPriority = 0.0f;
+				runAwayPriority = 1.0f;
+				eatPowerPillPriority = 2.0f;
+				eatGhostPriority = 0.5f;
+			} else {
+				eatPillPriority = 0.0f;
+				runAwayPriority = 1.0f;
+				eatPowerPillPriority = 2.0f;
+				eatGhostPriority = 0.5f;
+			}
+			possibleMoves = game.getPossibleMoves(current);
+		} else {
+			if(edibleGhostExists){
+				eatPillPriority = 1.0f;
+				runAwayPriority = 0.0f;
+				eatPowerPillPriority = 0.0f;
+				eatGhostPriority = 2.0f;
+				possibleMoves = game.getPossibleMoves(current);
+			} else {
+				eatPillPriority = 1.0f;
+				runAwayPriority = 0.0f;
+				eatPowerPillPriority = 2.0f;
+				eatGhostPriority = 0.0f;
+				possibleMoves = game.getPossibleMoves(current,game.getPacmanLastMoveMade());
+			}
 		}
-
-
+		
 		MOVE nextMove = null;
 		float nextMoveValue = 0;
 		//int furthestClosestGhostDistance = 0;		
@@ -137,7 +147,7 @@ public class MyPacMan extends Controller<MOVE>
 		float result = runAwayPriority*closestGhostScore;
 		result += eatPillPriority*closestPillScore;
 		result += eatPowerPillPriority*closestPowerPillScore;
-		result += eatGhostPriority*closestGhostScore;		
+		result += eatGhostPriority*closestEdibleGhostScore;		
 		
 		return result;
 	}
