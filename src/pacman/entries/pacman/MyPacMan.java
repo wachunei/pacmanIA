@@ -41,7 +41,7 @@ public class MyPacMan extends Controller<MOVE>
 				if(game.getShortestPathDistance(current,game.getGhostCurrentNodeIndex(ghost))<7)
 					return game.getNextMoveAwayFromTarget(game.getPacmanCurrentNodeIndex(),game.getGhostCurrentNodeIndex(ghost),DM.PATH);
 
-		// Resert variables		
+		// Reset variables		
 		rewardUp = false;
 		rewardLeft = false;
 		rewardDown = false;
@@ -57,7 +57,7 @@ public class MyPacMan extends Controller<MOVE>
 			if(game.getGhostEdibleTime(ghost)==0 && game.getGhostLairTime(ghost)==0) {
 				int ghostNode = game.getGhostCurrentNodeIndex(ghost);
 				int distance = game.getShortestPathDistance(current, ghostNode);
-				//				int distance = game.getManhattanDistance(current, ghostNode)
+				//int distance = game.getManhattanDistance(current, ghostNode)
 				if (distance < MIN_DISTANCE) {
 					isAnActiveGhostTooClose = true;
 					
@@ -68,9 +68,6 @@ public class MyPacMan extends Controller<MOVE>
 					int ghostY = game.getNodeYCood(ghostNode);
 
 					if(currentX == ghostX){
-						System.out.println("IGUALES X - Valor X:"+currentX);
-						System.out.println("IGUALES X - Valor Y current:"+currentY);
-						System.out.println("IGUALES X - Valor Y ghost  :"+ghostY);
 						if(currentY < ghostY){
 							rewardUp = true;							
 						}
@@ -99,8 +96,7 @@ public class MyPacMan extends Controller<MOVE>
 			rewardLeft = true;
 			rewardRight = true;
 		}
-		
-		if(rewardLeft && rewardRight){
+		else if(rewardLeft && rewardRight){
 			rewardUp = true;
 			rewardDown = true;
 			rewardLeft = false;
