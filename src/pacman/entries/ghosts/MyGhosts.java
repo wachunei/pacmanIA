@@ -1,7 +1,10 @@
 package pacman.entries.ghosts;
 
 import java.util.EnumMap;
+import java.util.Random;
+
 import pacman.controllers.Controller;
+import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
 
@@ -49,9 +52,9 @@ public class MyGhosts extends Controller<EnumMap<GHOST,MOVE>>
         		else if(game.getGhostEdibleTime(ghost)>0 || closeToPower(game)){
         			if(nonEdibleGhostsExist(game)){
         				// Moverme al nonedible más cercano (esperando que éste se coma a PacMan)
-        				MOVE currentMove = moveTowardsClosestNonEdibleGhost(currentIndex, game);
+        				MOVE currentMove = moveTowardsClosestNonEdibleGhost(currentIndex, game, ghost);
         				// Si ese movimiento no me acerca a Pacman
-        				if(currentMove != game.getNextMoveTowardsTarget(currentIndex, pacmanIndex, DM.PATH)){
+        				if(currentMove != game.getNextMoveTowardsTarget(currentIndex, pacmanIndex,  game.getGhostLastMoveMade(ghost), DM.PATH)){
         					myMoves.put(ghost, currentMove);        					
         				}
         				else{
@@ -68,7 +71,41 @@ public class MyGhosts extends Controller<EnumMap<GHOST,MOVE>>
         			
         		//else go towards Ms Pac-Man
         		else{
-        			myMoves.put(ghost,game.getNextMoveTowardsTarget(currentIndex,pacmanIndex,DM.PATH));        			
+        			if(game.isJunction(currentIndex) && otherGhostsNear(ghost, game)){
+        				Random r = new Random();
+        				double p = r.nextDouble();
+        				if(p<0.3){
+        					double d = r.nextDouble();
+        					if(d< 0.25){
+        						myMoves.put(ghost, MOVE.UP);       						
+        					}
+        					else if(d<0.50){
+        						myMoves.put(ghost, MOVE.LEFT);
+        					}
+        					else if(d<0.75){
+        						myMoves.put(ghost, MOVE.DOWN);
+        					}
+        					else{
+        						myMoves.put(ghost, MOVE.RIGHT);
+        					}
+        					        					
+        				}
+        			}
+        			
+        			if(ghost == GHOST.BLINKY){
+        				myMoves.put(ghost,game.getNextMoveTowardsTarget(currentIndex,pacmanIndex,DM.PATH));        				
+        			}
+        			else if(ghost == GHOST.INKY){
+        				myMoves.put(ghost,game.getNextMoveTowardsTarget(currentIndex,pacmanIndex,DM.PATH));
+        			}
+        			else if(ghost == GHOST.PINKY){
+        				myMoves.put(ghost,game.getNextMoveTowardsTarget(currentIndex,pacmanIndex,DM.EUCLID));
+        			}
+        			else if(ghost == GHOST.SUE){
+        				myMoves.put(ghost,game.getNextMoveTowardsTarget(currentIndex,pacmanIndex,DM.MANHATTAN));
+        			}
+        			
+        			        			
         		}        		
         			
         	
@@ -77,7 +114,17 @@ public class MyGhosts extends Controller<EnumMap<GHOST,MOVE>>
         return myMoves;
     }
 
-    private MOVE moveTowardsClosestNonEdibleGhost(int currentIndex, Game game) {
+    private boolean otherGhostsNear(GHOST currentGhost, Game game) {
+		for(GHOST ghost : GHOST.values()){
+			int distance = game.getShortestPathDistance(game.getGhostCurrentNodeIndex(currentGhost), game.getGhostCurrentNodeIndex(ghost));
+			if(distance<10 && ghost != currentGhost){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private MOVE moveTowardsClosestNonEdibleGhost(int currentIndex, Game game, GHOST currentGhost) {
 		int closestDistance = Integer.MAX_VALUE;
 		int closestGhostIndex = currentIndex;
     	
