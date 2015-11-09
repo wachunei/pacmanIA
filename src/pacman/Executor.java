@@ -46,15 +46,15 @@ public class Executor {
 		// TODO: pick your controller
 		Controller<MOVE> pacmanController =
 				//new HumanController(new KeyBoardInput());
-				// new StarterPacMan();
+//				 new StarterPacMan();
 				new MyPacMan();
 		//				new RandomPacMan();
 
 		Controller<EnumMap<GHOST, MOVE>> ghostController =
 //				new StarterGhosts();
 //		 new RandomGhosts();
-		// new MyGhosts();
-				new Legacy();
+		 new MyGhosts();
+				//new Legacy();
 
 
 
